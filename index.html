@@ -50,7 +50,6 @@
         .toast-success { background-color: #16a34a; }
         .toast-error { background-color: #dc2626; }
         .toast-warning { background-color: #d97706; }
-        /* --- BARU: Gaya untuk notifikasi info (data baru) --- */
         .toast-info { background-color: #2563eb; }
 
         /* Gaya untuk Sorting Tabel */
@@ -90,11 +89,12 @@
                 left: 0;
                 top: 0;
                 width: 100%;
+                padding: 20px;
             }
             body, #print-area {
                 background: white !important;
                 color: black !important;
-                font-size: 10pt;
+                font-size: 12pt;
             }
             #print-area * {
                 background-color: transparent !important;
@@ -108,28 +108,36 @@
             }
             .print-header {
                 text-align: center;
-                margin-bottom: 20px;
+                margin-bottom: 25px;
                 border-bottom: 2px solid #000 !important;
-                padding-bottom: 10px;
+                padding-bottom: 15px;
             }
-            .print-header h1 { font-size: 18pt; margin: 0; }
-            .print-header p { font-size: 10pt; margin: 4px 0 0; }
-            table {
-                width: 100%;
+            .print-header h1 { font-size: 20pt; margin: 0; }
+            .print-header p { font-size: 11pt; margin: 5px 0 0; }
+            
+            #print-area table {
+                width: 80%;
+                margin: 0 auto;
                 border-collapse: collapse;
-                font-size: 9pt;
+                font-size: 11pt;
             }
-            thead {
+            #print-area thead {
                 display: table-header-group;
             }
-            thead th {
-                background-color: #f2f2f2 !important;
+            #print-area thead th {
+                background-color: #e0e0e0 !important;
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
+                font-weight: bold;
             }
-            th, td {
-                border: 1px solid #000 !important;
-                padding: 6px;
+            #print-area th, #print-area td {
+                border: 1px solid #666 !important;
+                padding: 10px;
+                text-align: left;
+            }
+            #print-area td:last-child {
+                 text-align: right;
+                 font-weight: bold;
             }
         }
     </style>
@@ -181,14 +189,11 @@
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-4">
                         <h2 id="title-kirim" class="text-xl sm:text-2xl font-bold text-white">Data Pengiriman Hari Ini</h2>
                         <div class="flex items-center space-x-2">
-                            <!-- --- BARU: Indikator Auto-Refresh --- -->
                             <div id="auto-refresh-status-kirim" class="text-xs text-gray-400 hidden sm:block"></div>
-                            <!-- Tombol cetak/ekspor PDF -->
-                            <button id="print-kirim-btn" title="Cetak/Ekspor PDF" class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center gap-2">
+                            <button id="print-kirim-btn" title="Cetak Rekapitulasi" class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                                <span class="hidden sm:inline">Cetak</span>
+                                <span class="hidden sm:inline">Cetak Rekap</span>
                             </button>
-                            <!-- Tombol muat ulang data -->
                             <button id="refresh-kirim-btn" title="Muat Ulang Data" class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M20 4h-5v5M4 20h5v-5"></path><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path></svg>
                                 <span class="hidden sm:inline">Muat Ulang</span>
@@ -248,14 +253,11 @@
                       <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-4">
                         <h2 id="title-terima" class="text-xl sm:text-2xl font-bold text-white">Data Penerimaan Hari Ini</h2>
                         <div class="flex items-center space-x-2">
-                            <!-- --- BARU: Indikator Auto-Refresh --- -->
                             <div id="auto-refresh-status-terima" class="text-xs text-gray-400 hidden sm:block"></div>
-                            <!-- Tombol cetak/ekspor PDF -->
-                            <button id="print-terima-btn" title="Cetak/Ekspor PDF" class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center gap-2">
+                            <button id="print-terima-btn" title="Cetak Rekapitulasi" class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                                <span class="hidden sm:inline">Cetak</span>
+                                <span class="hidden sm:inline">Cetak Rekap</span>
                             </button>
-                            <!-- Tombol muat ulang data -->
                             <button id="refresh-terima-btn" title="Muat Ulang Data" class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M20 4h-5v5M4 20h5v-5"></path><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path></svg>
                                 <span class="hidden sm:inline">Muat Ulang</span>
@@ -440,26 +442,21 @@
                 const data = await response.json();
                 if (data.result === 'error') throw new Error(data.error);
                 
-                // --- MODIFIKASI: Logika untuk menghapus data duplikat ---
                 const uniqueEntries = new Set();
                 const deDuplicatedData = data.filter(row => {
                     if (!row || typeof row.rowIndex === 'undefined') {
                         return false;
                     }
-                    // Membuat kunci unik berdasarkan No BPB, Kode Barang, dan Tujuan.
-                    // Ini akan mencegah baris dengan kombinasi yang sama untuk dihitung dua kali.
                     const noBpb = String(row['No BPB'] || '').trim().toUpperCase();
                     const kodeBarang = String(row['Kode Barang'] || '').trim().toUpperCase();
-                    const tujuan = normalizeTujuan(row.Tujuan); // Menggunakan fungsi normalisasi yang sudah ada
+                    const tujuan = normalizeTujuan(row.Tujuan);
                     
                     const uniqueKey = `${noBpb}|${kodeBarang}|${tujuan}`;
 
                     if (uniqueEntries.has(uniqueKey)) {
-                        // Jika kunci ini sudah ada, ini adalah duplikat. Jangan masukkan.
                         console.log(`Duplikat ditemukan dan dilewati: ${uniqueKey}`);
                         return false;
                     } else {
-                        // Jika kunci ini baru, tambahkan ke Set dan masukkan datanya.
                         uniqueEntries.add(uniqueKey);
                         return true;
                     }
@@ -579,7 +576,6 @@
                 ]);
                 applyFilters();
                 showToast('Data berhasil dimuat.', 'success');
-                // --- MODIFIKASI: Reset timer countdown setelah muat manual ---
                 lastRefreshTime = Date.now();
             } catch (error) {
                 showToast(error.message, 'error');
@@ -709,16 +705,27 @@
             filterAndRender(allDataTerima, 'terima');
         };
 
-        const handlePrint = (tableId, title) => {
+        // --- MODIFIKASI: Fungsi cetak sekarang hanya untuk rekapitulasi ---
+        const handlePrint = (rekapContainerId, title) => {
+            const rekapContainer = document.getElementById(rekapContainerId);
+
+            if (!rekapContainer || rekapContainer.style.display === 'none' || rekapContainer.innerHTML.trim() === '') {
+                showToast('Tidak ada rekapitulasi untuk dicetak. Silakan filter data terlebih dahulu.', 'warning');
+                return;
+            }
+
             const printArea = document.createElement('div');
             printArea.id = 'print-area';
 
-            const header = `<div class="print-header"><h1>${title}</h1><p>Dicetak pada: ${new Date().toLocaleString('id-ID')}</p></div>`;
+            const printTitle = `Rekapitulasi - ${title}`;
+            const header = `<div class="print-header"><h1>${printTitle}</h1><p>Dicetak pada: ${new Date().toLocaleString('id-ID')}</p></div>`;
             
-            const tableToPrint = document.getElementById(tableId).cloneNode(true);
-            tableToPrint.querySelectorAll('.no-print').forEach(el => el.remove());
+            const contentToPrint = rekapContainer.cloneNode(true);
+            
+            const h3Title = contentToPrint.querySelector('h3');
+            if(h3Title) h3Title.remove();
 
-            printArea.innerHTML = header + tableToPrint.outerHTML;
+            printArea.innerHTML = header + contentToPrint.innerHTML;
             document.body.appendChild(printArea);
 
             window.print();
@@ -726,7 +733,6 @@
             document.body.removeChild(printArea);
         };
         
-        // --- BARU: Fungsi untuk Auto-Refresh dan Notifikasi ---
         const updateAutoRefreshStatus = () => {
             const remainingMs = REFRESH_INTERVAL_MS - (Date.now() - lastRefreshTime);
             const remainingSeconds = Math.max(0, Math.floor(remainingMs / 1000));
@@ -752,15 +758,15 @@
                 allDataKirim = newDataKirim;
                 allDataTerima = newDataTerima;
                 
-                applyFilters(); // Perbarui tampilan dengan data baru
+                applyFilters();
 
                 if (newDataKirim.length > previousKirimCount) {
                     showToast('Data pengiriman baru telah tiba!', 'info');
-                    if (isAudioReady && synth) synth.triggerAttackRelease("G5", "8n");
+                    if (isAudioReady && synth) synth.triggerAttackRelease("G5", "8n", Tone.now());
                 }
                 if (newDataTerima.length > previousTerimaCount) {
                     showToast('Data penerimaan baru telah tiba!', 'info');
-                    if (isAudioReady && synth) synth.triggerAttackRelease("C5", "8n");
+                    if (isAudioReady && synth) synth.triggerAttackRelease("C5", "8n", Tone.now());
                 }
             } catch (error) {
                 console.error("Gagal melakukan refresh di latar belakang:", error);
@@ -771,7 +777,7 @@
         };
 
         const startAutoRefresh = () => {
-            stopAutoRefresh(); // Hentikan interval sebelumnya jika ada
+            stopAutoRefresh();
             lastRefreshTime = Date.now();
             autoRefreshIntervalId = setInterval(backgroundRefresh, REFRESH_INTERVAL_MS);
             countdownIntervalId = setInterval(updateAutoRefreshStatus, 1000);
@@ -815,8 +821,9 @@
             document.getElementById('refresh-kirim-btn').addEventListener('click', loadInitialView);
             document.getElementById('refresh-terima-btn').addEventListener('click', loadInitialView);
             
-            document.getElementById('print-kirim-btn').addEventListener('click', () => handlePrint('table-kirim', document.getElementById('title-kirim').textContent));
-            document.getElementById('print-terima-btn').addEventListener('click', () => handlePrint('table-terima', document.getElementById('title-terima').textContent));
+            // --- MODIFIKASI: Event listener cetak sekarang menunjuk ke kontainer rekapitulasi ---
+            document.getElementById('print-kirim-btn').addEventListener('click', () => handlePrint('rekap-container-kirim', document.getElementById('title-kirim').textContent));
+            document.getElementById('print-terima-btn').addEventListener('click', () => handlePrint('rekap-container-terima', document.getElementById('title-terima').textContent));
         };
 
         // --- Inisialisasi Aplikasi ---
@@ -836,7 +843,6 @@
             appContainer.classList.remove('hidden');
             setupUIForRole(currentUserRole);
             loadInitialView().then(() => {
-                // --- MODIFIKASI: Mulai auto-refresh setelah login otomatis ---
                 startAutoRefresh();
             });
         }
@@ -855,7 +861,6 @@
                 loginError.classList.add('hidden');
                 setupUIForRole(currentUserRole);
                 loadInitialView().then(() => {
-                    // --- MODIFIKASI: Mulai auto-refresh setelah login manual ---
                     startAutoRefresh();
                 });
             } else {
@@ -864,7 +869,6 @@
         });
 
         logoutBtn.addEventListener('click', () => {
-            // --- MODIFIKASI: Hentikan auto-refresh saat logout ---
             stopAutoRefresh();
             localStorage.removeItem('userLoginData');
             window.location.reload();
