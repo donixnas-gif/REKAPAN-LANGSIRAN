@@ -139,6 +139,12 @@
                  text-align: right;
                  font-weight: bold;
             }
+            /* --- PERBAIKAN: Menghilangkan scrollbar dan max-height saat cetak --- */
+            #print-area .rekap-scroll-area {
+                max-height: none !important;
+                overflow: visible !important;
+                border: none !important;
+            }
         }
     </style>
 </head>
@@ -624,7 +630,7 @@
 
                 rekapContainer.innerHTML = `
                     <h3 class="text-md font-semibold text-white mb-3">Rekapitulasi Filter (${sortedRekap.length} item unik):</h3>
-                    <div class="overflow-hidden rounded-lg border border-gray-700 max-h-48 overflow-y-auto">
+                    <div class="rekap-scroll-area overflow-hidden rounded-lg border border-gray-700 max-h-48 overflow-y-auto">
                         <table class="min-w-full text-sm">
                             <thead class="bg-gray-700/50">
                                 <tr>
@@ -705,8 +711,7 @@
             filterAndRender(allDataTerima, 'terima');
         };
 
-        // --- MODIFIKASI: Fungsi cetak sekarang hanya untuk rekapitulasi ---
-        const handlePrint = (rekapContainerId, title) => {
+        const handlePrint = (rekapContainerId, type) => {
             const rekapContainer = document.getElementById(rekapContainerId);
 
             if (!rekapContainer || rekapContainer.style.display === 'none' || rekapContainer.innerHTML.trim() === '') {
@@ -717,8 +722,10 @@
             const printArea = document.createElement('div');
             printArea.id = 'print-area';
 
-            const printTitle = `Rekapitulasi - ${title}`;
-            const header = `<div class="print-header"><h1>${printTitle}</h1><p>Dicetak pada: ${new Date().toLocaleString('id-ID')}</p></div>`;
+            // --- PERBAIKAN: Judul dan tanggal yang lebih ringkas ---
+            const printTitle = `Laporan Rekapitulasi ${type === 'kirim' ? 'Pengiriman' : 'Penerimaan'}`;
+            const printDate = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+            const header = `<div class="print-header"><h1>${printTitle}</h1><p>Dicetak pada: ${printDate}</p></div>`;
             
             const contentToPrint = rekapContainer.cloneNode(true);
             
@@ -821,9 +828,8 @@
             document.getElementById('refresh-kirim-btn').addEventListener('click', loadInitialView);
             document.getElementById('refresh-terima-btn').addEventListener('click', loadInitialView);
             
-            // --- MODIFIKASI: Event listener cetak sekarang menunjuk ke kontainer rekapitulasi ---
-            document.getElementById('print-kirim-btn').addEventListener('click', () => handlePrint('rekap-container-kirim', document.getElementById('title-kirim').textContent));
-            document.getElementById('print-terima-btn').addEventListener('click', () => handlePrint('rekap-container-terima', document.getElementById('title-terima').textContent));
+            document.getElementById('print-kirim-btn').addEventListener('click', () => handlePrint('rekap-container-kirim', 'kirim'));
+            document.getElementById('print-terima-btn').addEventListener('click', () => handlePrint('rekap-container-terima', 'terima'));
         };
 
         // --- Inisialisasi Aplikasi ---
