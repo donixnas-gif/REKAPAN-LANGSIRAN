@@ -78,6 +78,16 @@
 
         /* --- GAYA CETAK --- */
         @media print {
+            /* --- PERBAIKAN: Menghilangkan header/footer bawaan browser --- */
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            body {
+                margin: 0;
+            }
+
             body * {
                 visibility: hidden;
             }
@@ -89,7 +99,9 @@
                 left: 0;
                 top: 0;
                 width: 100%;
-                padding: 20px;
+                /* --- PERBAIKAN: Menggunakan padding untuk menggantikan margin halaman --- */
+                padding: 20mm;
+                box-sizing: border-box;
             }
             body, #print-area {
                 background: white !important;
@@ -139,7 +151,6 @@
                  text-align: right;
                  font-weight: bold;
             }
-            /* --- PERBAIKAN: Menghilangkan scrollbar dan max-height saat cetak --- */
             #print-area .rekap-scroll-area {
                 max-height: none !important;
                 overflow: visible !important;
@@ -722,7 +733,6 @@
             const printArea = document.createElement('div');
             printArea.id = 'print-area';
 
-            // --- PERBAIKAN: Judul dan tanggal yang lebih ringkas ---
             const printTitle = `Laporan Rekapitulasi ${type === 'kirim' ? 'Pengiriman' : 'Penerimaan'}`;
             const printDate = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
             const header = `<div class="print-header"><h1>${printTitle}</h1><p>Dicetak pada: ${printDate}</p></div>`;
