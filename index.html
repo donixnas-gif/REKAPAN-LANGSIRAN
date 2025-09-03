@@ -78,7 +78,6 @@
 
         /* --- GAYA CETAK --- */
         @media print {
-            /* --- PERBAIKAN: Menghilangkan header/footer bawaan browser --- */
             @page {
                 size: A4;
                 margin: 0;
@@ -99,7 +98,6 @@
                 left: 0;
                 top: 0;
                 width: 100%;
-                /* --- PERBAIKAN: Menggunakan padding untuk menggantikan margin halaman --- */
                 padding: 20mm;
                 box-sizing: border-box;
             }
@@ -150,6 +148,10 @@
             #print-area td:last-child {
                  text-align: right;
                  font-weight: bold;
+            }
+            /* --- MODIFIKASI: Membuat total keseluruhan rata kiri saat cetak --- */
+            #print-area .rekap-grand-total {
+                text-align: left !important;
             }
             #print-area .rekap-scroll-area {
                 max-height: none !important;
@@ -393,19 +395,14 @@
         const advancedNormalizeItemCode = (code) => {
             if (!code) return '';
             let normalized = String(code).toLowerCase();
-            const replacements = { 
-                'hjmd': 'hmd', 'ugmd': 'umd', 'brmd': 'bmd', 'belge': 'beige', 
-                'wmd': 'md', 'warna': '',
-            };
-            const sortedKeys = Object.keys(replacements).sort((a, b) => b.length - a.length);
-            for (const key of sortedKeys) {
-                normalized = normalized.replace(new RegExp(key, 'g'), replacements[key]);
-            }
-            normalized = normalized.replace(/[^a-z0-9]/g, '');
-            const wordsToRemove = ['ikea', 'mrdiy'];
+            
+            const wordsToRemove = ['ikea', 'mrdiy', 'warna', 'polos'];
             wordsToRemove.forEach(word => {
-                normalized = normalized.replace(word, '');
+                normalized = normalized.replace(new RegExp(`\\b${word}\\b`, 'g'), '');
             });
+
+            normalized = normalized.replace(/[^a-z0-9]/g, '');
+            
             return normalized;
         };
 
@@ -610,22 +607,33 @@
                 return;
             }
 
-            const rekap = filteredData.reduce((acc, row) => {
+            const rekap = {};
+            const nameFrequencies = {};
+
+            filteredData.forEach(row => {
                 const originalKode = String(row['Kode Barang'] || 'TIDAK DIKETAHUI').trim().toUpperCase();
-                if (!originalKode) return acc;
+                if (!originalKode) return;
 
                 const normalizedKode = advancedNormalizeItemCode(originalKode);
                 const jumlah = parseInt(row.Jumlah) || 0;
 
-                if (!acc[normalizedKode]) {
-                    acc[normalizedKode] = { total: 0, displayName: originalKode };
+                if (!rekap[normalizedKode]) {
+                    rekap[normalizedKode] = { total: 0 };
+                    nameFrequencies[normalizedKode] = {};
                 }
-                acc[normalizedKode].total += jumlah;
-                
-                return acc;
-            }, {});
+                rekap[normalizedKode].total += jumlah;
+                nameFrequencies[normalizedKode][originalKode] = (nameFrequencies[normalizedKode][originalKode] || 0) + 1;
+            });
+
+            Object.keys(rekap).forEach(normalizedKode => {
+                const frequencies = nameFrequencies[normalizedKode];
+                const displayName = Object.keys(frequencies).reduce((a, b) => frequencies[a] > frequencies[b] ? a : b);
+                rekap[normalizedKode].displayName = displayName;
+            });
 
             const sortedRekap = Object.values(rekap).sort((a, b) => a.displayName.localeCompare(b.displayName));
+            
+            const grandTotal = sortedRekap.reduce((sum, item) => sum + item.total, 0);
 
             if (sortedRekap.length > 0) {
                 rekapContainer.style.display = 'block';
@@ -638,6 +646,13 @@
                         </tr>
                     `;
                 });
+                
+                const totalRowHtml = `
+                    <tr class="bg-gray-600 font-bold text-white border-t-2 border-gray-500">
+                        <td class="p-3 text-left">TOTAL KESELURUHAN</td>
+                        <td class="p-3 text-right rekap-grand-total">${grandTotal}</td>
+                    </tr>
+                `;
 
                 rekapContainer.innerHTML = `
                     <h3 class="text-md font-semibold text-white mb-3">Rekapitulasi Filter (${sortedRekap.length} item unik):</h3>
@@ -651,6 +666,7 @@
                             </thead>
                             <tbody class="bg-gray-800">
                                 ${tableRowsHtml}
+                                ${totalRowHtml}
                             </tbody>
                         </table>
                     </div>
@@ -779,11 +795,11 @@
 
                 if (newDataKirim.length > previousKirimCount) {
                     showToast('Data pengiriman baru telah tiba!', 'info');
-                    if (isAudioReady && synth) synth.triggerAttackRelease("G5", "8n", Tone.now());
+                    if (isAudioReady && synth) synth.triggerAttackRelease("G5", "8n");
                 }
                 if (newDataTerima.length > previousTerimaCount) {
                     showToast('Data penerimaan baru telah tiba!', 'info');
-                    if (isAudioReady && synth) synth.triggerAttackRelease("C5", "8n", Tone.now());
+                    if (isAudioReady && synth) synth.triggerAttackRelease("C5", "8n");
                 }
             } catch (error) {
                 console.error("Gagal melakukan refresh di latar belakang:", error);
@@ -895,3 +911,4 @@
     </script>
 </body>
 </html>
+
